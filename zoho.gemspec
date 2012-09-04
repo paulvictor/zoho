@@ -6,7 +6,7 @@ Gem::Specification.new do |gem|
   gem.email         = ["paulvictor@gmail.com"]
   gem.description   = %q{Ruby interface to ZOHO docs}
   gem.summary       = %q{Ruby interface to ZOHO docs}
-  gem.homepage      = "git://github.com/paulvictor/zoho.git"
+  gem.homepage      = "http://github.com/paulvictor/zoho.git"
 
   gem.add_dependency "rest-client", "~> 1.6.7"
   gem.add_development_dependency "rspec", "~> 2.11.0"
