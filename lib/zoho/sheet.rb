@@ -19,7 +19,6 @@ module Zoho
         args.each_pair{|k,v| args_in_url_format << "#{k}=#{v}"}
         sheets_list_url << "&" + args_in_url_format
       end
-      puts sheets_list_url
       resp = RestClient.get(sheets_list_url)
       JSON.parse(resp)['response']['result']
     end
@@ -47,14 +46,20 @@ module Zoho
     def replace_with(file_name, contenttype = 'csv')
       raise "Zoho::Sheet uninitialized" if @@auth_params.nil?
       cli = Zoho::Client.new(@@auth_params)
-      puts "https://sheet.zoho.com/api/private/json/savebook/#{wb_id}?apikey=#{cli.api_key}&ticket=#{cli.ticket}&contentType=#{contenttype}&updateLock=#{update_lock}&isOverwrite=true"
       resp = RestClient.post "https://sheet.zoho.com/api/private/json/savebook/#{wb_id}?apikey=#{cli.api_key}&ticket=#{cli.ticket}&contentType=#{contenttype}&updateLock=#{update_lock}&isOverwrite=true", :content => File.new(file_name, 'rb')
     end
 
     def update(new_row = "")
+      # New row is a CSV row.
+      # The fields have to be enclosed with \"<field>\"
       existing_data = download || ""
-      updated_data = existing_data + "\n" + new_row
+      max_commas = existing_data.split("\n").inject(0){|memo, line|
+        memo > line.count(",") ? memo : line.count(",")
+      }
+      new_row += "," * (max_commas - new_row.count(','))
+      updated_data = existing_data + "\n" + new_row + "\n"
       File.open("/tmp/#{@wb_name}.csv", 'w') {|f| f.write(updated_data) }
+      replace_with("/tmp/#{@wb_name}.csv")
     end
   end
 end
