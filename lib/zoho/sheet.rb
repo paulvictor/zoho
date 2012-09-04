@@ -54,7 +54,7 @@ module Zoho
     def update(new_row = "")
       existing_data = download || ""
       updated_data = existing_data + "\n" + new_row
-      File.open("/tmp/#{@wb_name}", 'w') {|f| f.write(updated_data) }
+      File.open("/tmp/#{@wb_name}.csv", 'w') {|f| f.write(updated_data) }
     end
   end
 end
